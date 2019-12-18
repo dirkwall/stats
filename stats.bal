@@ -17,11 +17,14 @@ http:Client github = new("https://api.github.com", {
 });
 
 public function main(string... args) { 
-    var response = github->get("/repos/keptn/keptn");
+    // specify GitHub project here
+    var gitHubProject = "keptn/keptn";
+
+    var response = github->get("/repos/" + gitHubProject);
     if (response is http:Response) {
         json|error projectDetails = response.getJsonPayload();
         if (projectDetails is error) {
-            log:printError("Failed to get /repos/keptn/keptn.", err = projectDetails);
+            log:printError("Failed to get /repos/" + gitHubProject + ".", err = projectDetails);
         }
         else {
             string|error customTimeString = time:format(time:currentTime(), "w");
@@ -36,7 +39,7 @@ public function main(string... args) {
             io:print(project["stargazers_count"], ",");
             io:print(project["forks_count"], ",");
             
-            var contributorResponse = github->get("/repos/keptn/keptn/contributors");
+            var contributorResponse = github->get("/repos/" + gitHubProject + "/contributors");
             if (contributorResponse is http:Response) {
                 json|error contributorList = contributorResponse.getJsonPayload();
                 if (contributorList is error) {
@@ -48,7 +51,7 @@ public function main(string... args) {
                     io:print(",");  
                 }
             }
-            var cloneResponse = github->get("/repos/keptn/keptn/traffic/clones");
+            var cloneResponse = github->get("/repos/" + gitHubProject + "/traffic/clones");
             if (cloneResponse is http:Response) {
                 json|error cloneList = cloneResponse.getJsonPayload();
                 if (cloneList is error) {
@@ -58,7 +61,7 @@ public function main(string... args) {
                     io:print(cloneList.count?:"?", ",", cloneList.uniques?:"?", ",");
                 }
             }
-            var viewResponse = github->get("/repos/keptn/keptn/traffic/views");
+            var viewResponse = github->get("/repos/" + gitHubProject + "/traffic/views");
             if (viewResponse is http:Response) {
                 json|error viewList = viewResponse.getJsonPayload();
                 if (viewList is error) {
@@ -71,7 +74,7 @@ public function main(string... args) {
 
             // Downloads stats
             int totalDownloads = 0;
-            var releaseResponse = github->get("/repos/keptn/keptn/releases");
+            var releaseResponse = github->get("/repos/" + gitHubProject + "/releases");
             if (releaseResponse is http:Response) {
                 json|error releaseListJson = releaseResponse.getJsonPayload();
                 if (releaseListJson is error) {
